@@ -27,20 +27,53 @@ class OrderController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ["shipping_address", "payment_method"],
+                required: [
+                    "customer_name",
+                    "customer_email",
+                    "customer_phone",
+                    "shipping_address",
+                    "items"
+                ],
                 properties: [
+                    new OA\Property(property: "customer_name", type: "string", example: "Nguyễn Văn A"),
+                    new OA\Property(property: "customer_email", type: "string", format: "email", example: "customer@example.com"),
+                    new OA\Property(property: "customer_phone", type: "string", example: "0987654321"),
                     new OA\Property(property: "shipping_address", type: "string", example: "123 Nguyễn Huệ, Q.1, TP.HCM"),
-                    new OA\Property(property: "payment_method", type: "string", example: "cod"),
+                    new OA\Property(
+                        property: "items",
+                        type: "array",
+                        minItems: 1,
+                        items: new OA\Items(
+                            type: "object",
+                            required: ["product_id", "quantity"],
+                            properties: [
+                                new OA\Property(property: "product_id", type: "integer", example: 1),
+                                new OA\Property(property: "quantity", type: "integer", minimum: 1, example: 2)
+                            ]
+                        ),
+                        example: [["product_id" => 1, "quantity" => 2]]
+                    ),
+                    new OA\Property(
+                        property: "payment_method",
+                        type: "string",
+                        enum: ["cod", "bank_transfer"],
+                        example: "cod",
+                        nullable: true
+                    ),
                     new OA\Property(property: "coupon_code", type: "string", example: "SUMMER2026", nullable: true),
-                    new OA\Property(property: "note", type: "string", example: "Giao trong giờ hành chính", nullable: true)
+                    new OA\Property(property: "notes", type: "string", example: "Giao trong giờ hành chính", nullable: true)
                 ]
             )
         ),
         tags: ["Orders"],
         responses: [
-            new OA\Response(response: 201, description: "Tạo đơn hàng thành công")
+            new OA\Response(response: 201, description: "Tạo đơn hàng thành công"),
+            new OA\Response(response: 422, description: "Dữ liệu đơn hàng không hợp lệ")
         ]
     )]
+
+
+
     public function store(StoreOrderRequest $request): JsonResponse
     {
         $dto = CreateOrderDTO::fromRequest($request);

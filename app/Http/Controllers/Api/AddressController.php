@@ -59,7 +59,7 @@ class AddressController extends Controller
     )]
     public function store(StoreAddressRequest $request): JsonResponse
     {
-        $address = $this->addressService->create($request->user(), $request->validated());
+        $address = $this->addressService->store($request->user(), $request->validated());
 
         return $this->successResponse(new AddressResource($address), 'Đã thêm địa chỉ mới.', Response::HTTP_CREATED);
     }
@@ -93,7 +93,7 @@ class AddressController extends Controller
     public function update(UpdateAddressRequest $request, Address $address): JsonResponse
     {
         abort_unless($address->user_id === $request->user()->id, 403);
-        $updated = $this->addressService->update($address, $request->validated());
+        $updated = $this->addressService->update($request->user(), $address, $request->validated());
 
         return $this->successResponse(new AddressResource($updated), 'Cập nhật địa chỉ thành công.');
     }
@@ -113,7 +113,7 @@ class AddressController extends Controller
     public function destroy(Request $request, Address $address): JsonResponse
     {
         abort_unless($address->user_id === $request->user()->id, 403);
-        $this->addressService->delete($address);
+        $this->addressService->destroy($request->user(), $address);
 
         return $this->successResponse(null, 'Đã xóa địa chỉ.');
     }
@@ -133,7 +133,7 @@ class AddressController extends Controller
     public function setDefault(Request $request, Address $address): JsonResponse
     {
         abort_unless($address->user_id === $request->user()->id, 403);
-        $updated = $this->addressService->setDefault($address);
+        $updated = $this->addressService->setDefault($request->user(), $address);
 
         return $this->successResponse(new AddressResource($updated), 'Đặt địa chỉ mặc định thành công.');
     }

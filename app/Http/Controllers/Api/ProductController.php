@@ -60,15 +60,20 @@ class ProductController extends Controller
         summary: "Chi tiết sản phẩm",
         tags: ["Products"],
         parameters: [
-            new OA\Parameter(name: "product", in: "path", description: "ID sản phẩm", required: true, schema: new OA\Schema(type: "integer"))
+            new OA\Parameter(name: "product", in: "path", description: "ID hoặc slug sản phẩm", required: true, schema: new OA\Schema(type: "string", example: "iphone-15-pro-max-256gb"))
         ],
         responses: [
             new OA\Response(response: 200, description: "Chi tiết sản phẩm"),
             new OA\Response(response: 404, description: "Sản phẩm không tồn tại")
         ]
     )]
-    public function show(Product $product): JsonResponse
+    public function show(string $product): JsonResponse
     {
+        $product = Product::query()
+            ->where('slug', $product)
+            ->orWhere(fn($query) => ctype_digit($product) ? $query->whereKey((int) $product) : $query->whereRaw('1 = 0'))
+            ->firstOrFail();
+
         return $this->successResponse(new ProductResource($product->load('category:id,name,slug')));
     }
 
@@ -79,23 +84,74 @@ class ProductController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ["name", "category_id", "price", "stock_quantity"],
+                required: [
+                    "category_id",
+                    "name",
+                    "sku",
+                    "price",
+                    "stock",
+                    "description",
+                    "status"
+                ],
                 properties: [
-                    new OA\Property(property: "name", type: "string", example: "Điện thoại iPhone 15 Pro"),
-                    new OA\Property(property: "category_id", type: "integer", example: 1),
-                    new OA\Property(property: "price", type: "number", example: 28990000),
-                    new OA\Property(property: "sale_price", type: "number", example: 27490000),
-                    new OA\Property(property: "stock_quantity", type: "integer", example: 50),
-                    new OA\Property(property: "description", type: "string", example: "Chi tiết sản phẩm...")
+                    new OA\Property(
+                        property: "category_id",
+                        type: "integer",
+                        example: 1
+                    ),
+                    new OA\Property(
+                        property: "name",
+                        type: "string",
+                        example: "Áo Polo Nam Premium Cotton"
+                    ),
+                    new OA\Property(
+                        property: "sku",
+                        type: "string",
+                        example: "POLO-NAM-99"
+                    ),
+                    new OA\Property(
+                        property: "price",
+                        type: "number",
+                        format: "float",
+                        example: 350000
+                    ),
+                    new OA\Property(
+                        property: "sale_price",
+                        type: "number",
+                        format: "float",
+                        example: 299000
+                    ),
+                    new OA\Property(
+                        property: "stock",
+                        type: "integer",
+                        example: 50
+                    ),
+                    new OA\Property(
+                        property: "description",
+                        type: "string",
+                        example: "Áo polo chất liệu cotton co dãn 4 chiều, thoáng mát."
+                    ),
+                    new OA\Property(
+                        property: "status",
+                        type: "string",
+                        example: "published"
+                    )
                 ]
             )
         ),
         tags: ["Products"],
         responses: [
-            new OA\Response(response: 201, description: "Tạo sản phẩm thành công"),
-            new OA\Response(response: 403, description: "Không có quyền thực hiện")
+            new OA\Response(
+                response: 201,
+                description: "Tạo sản phẩm thành công"
+            ),
+            new OA\Response(
+                response: 403,
+                description: "Không có quyền thực hiện"
+            )
         ]
     )]
+
     public function store(StoreProductRequest $request): JsonResponse
     {
         return $this->successResponse(

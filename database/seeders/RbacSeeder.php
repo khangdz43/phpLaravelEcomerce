@@ -24,6 +24,10 @@ class RbacSeeder extends Seeder
             ['name' => 'orders.view',     'display_name' => 'Xem danh sách đơn hàng'],
             ['name' => 'orders.update',   'display_name' => 'Cập nhật trạng thái đơn hàng'],
             ['name' => 'orders.delete',   'display_name' => 'Hủy/Xóa đơn hàng'],
+
+            // Admin operations
+            ['name' => 'dashboard.view', 'display_name' => 'Xem dashboard quản trị'],
+            ['name' => 'users.view',     'display_name' => 'Xem danh sách người dùng'],
         ];
 
         foreach ($permissions as $perm) {
@@ -47,7 +51,8 @@ class RbacSeeder extends Seeder
             'products.create',
             'products.update',
             'orders.view',
-            'orders.update'
+            'orders.update',
+            'dashboard.view'
         ])->get();
         $staffRole->permissions()->sync($staffPermissions->pluck('id'));
 
@@ -76,7 +81,7 @@ class RbacSeeder extends Seeder
         $customer->roles()->sync([$customerRole->id]);
 
         // 5. Tạo thêm 10 User ngẫu nhiên bằng Factory
-        User::factory(10)->create()->each(function ($user) use ($customerRole) {
+        User::factory(10)->create()->each(function (User $user) use ($customerRole) {
             $user->roles()->sync([$customerRole->id]);
         });
     }

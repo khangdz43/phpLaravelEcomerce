@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\Admin\AdminOrderController;
+use App\Http\Controllers\Api\Admin\AdminDashboardController;
+use App\Http\Controllers\Api\Admin\AdminProductController;
+use App\Http\Controllers\Api\Admin\AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
@@ -74,6 +77,21 @@ Route::middleware('auth:sanctum')->group(function () {
     | Admin / Staff Management Routes (Permission-protected)
     |--------------------------------------------------------------------------
     */
+
+    // Dashboard
+    Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->middleware('permission:dashboard.view');
+
+    // Product and inventory management
+    Route::get('/admin/products', [AdminProductController::class, 'index'])->middleware('permission:products.view');
+    Route::get('/admin/products/low-stock', [AdminProductController::class, 'index'])->defaults('low_stock', true)->middleware('permission:products.view');
+    Route::patch('/admin/products/{product:id}/stock', [AdminProductController::class, 'updateStock'])->middleware('permission:products.update');
+
+
+
+    // User management
+    Route::get('/admin/users', [AdminUserController::class, 'index'])->middleware('permission:users.view');
+    Route::get('/admin/users/{user}', [AdminUserController::class, 'show'])->middleware('permission:users.view');
+
     // Category management
     Route::post('/categories', [CategoryController::class, 'store'])->middleware('permission:products.create');
     Route::put('/categories/{category}', [CategoryController::class, 'update'])->middleware('permission:products.update');
@@ -81,8 +99,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Product management
     Route::post('/products', [ProductController::class, 'store'])->middleware('permission:products.create');
-    Route::put('/products/{product}', [ProductController::class, 'update'])->middleware('permission:products.update');
-    Route::delete('/products/{product}', [ProductController::class, 'destroy'])->middleware('permission:products.delete');
+    Route::put('/products/{product:id}', [ProductController::class, 'update'])->middleware('permission:products.update');
+    Route::delete('/products/{product:id}', [ProductController::class, 'destroy'])->middleware('permission:products.delete');
 
     // Admin Order Management
     Route::get('/admin/orders', [AdminOrderController::class, 'index'])->middleware('permission:orders.view');

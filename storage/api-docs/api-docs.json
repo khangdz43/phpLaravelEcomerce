@@ -5,7 +5,7 @@
         "description": "API documentation for Laravel E-Commerce Core project including Auth, Products, Categories, Cart, Orders, Coupons, Reviews/Comments, Addresses, and Admin Management.",
         "contact": {
             "name": "API Support Team",
-            "email": "admin@ecommerce.test"
+            "email": "admin@gmail.com"
         },
         "version": "1.0.0"
     },
@@ -228,6 +228,25 @@
                 ]
             }
         },
+        "/api/admin/dashboard": {
+            "get": {
+                "tags": [
+                    "Admin - Dashboard"
+                ],
+                "summary": "Lấy thống kê tổng quan cho Admin",
+                "operationId": "12a5eb7fe59978485ef37b27a2d7a2ad",
+                "responses": {
+                    "200": {
+                        "description": "Thống kê dashboard"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/admin/orders": {
             "get": {
                 "tags": [
@@ -353,6 +372,183 @@
                 ]
             }
         },
+        "/api/admin/products": {
+            "get": {
+                "tags": [
+                    "Admin - Products"
+                ],
+                "summary": "Danh sách sản phẩm dành cho quản trị",
+                "operationId": "39f7550b1036fd4cf3812049ba5f7d06",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "low_stock",
+                        "in": "query",
+                        "description": "Chỉ lấy sản phẩm sắp hết hàng",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        }
+                    },
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách sản phẩm phân trang"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/products/{product}/stock": {
+            "patch": {
+                "tags": [
+                    "Admin - Products"
+                ],
+                "summary": "Cập nhật tồn kho sản phẩm",
+                "operationId": "06e1b6bb390f7aa5351088892f9d50a8",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "stock": {
+                                        "type": "integer",
+                                        "example": 25,
+                                        "minimum": 0
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật tồn kho thành công"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users": {
+            "get": {
+                "tags": [
+                    "Admin - Users"
+                ],
+                "summary": "Danh sách người dùng dành cho quản trị",
+                "operationId": "c11e2de362c0a78b9361997e04eb75cd",
+                "parameters": [
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "role",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "customer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách người dùng phân trang"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/users/{user}": {
+            "get": {
+                "tags": [
+                    "Admin - Users"
+                ],
+                "summary": "Chi tiết người dùng và lịch sử mua hàng",
+                "operationId": "96a286496931eae38b312898b40513bc",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết người dùng"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/auth/register": {
             "post": {
                 "tags": [
@@ -427,7 +623,7 @@
                                     "email": {
                                         "type": "string",
                                         "format": "email",
-                                        "example": "admin@ecommerce.test"
+                                        "example": "admin@gmail.com"
                                     },
                                     "password": {
                                         "type": "string",
@@ -977,24 +1173,73 @@
                         "application/json": {
                             "schema": {
                                 "required": [
+                                    "customer_name",
+                                    "customer_email",
+                                    "customer_phone",
                                     "shipping_address",
-                                    "payment_method"
+                                    "items"
                                 ],
                                 "properties": {
+                                    "customer_name": {
+                                        "type": "string",
+                                        "example": "Nguyễn Văn A"
+                                    },
+                                    "customer_email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "customer@example.com"
+                                    },
+                                    "customer_phone": {
+                                        "type": "string",
+                                        "example": "0987654321"
+                                    },
                                     "shipping_address": {
                                         "type": "string",
                                         "example": "123 Nguyễn Huệ, Q.1, TP.HCM"
                                     },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_id",
+                                                "quantity"
+                                            ],
+                                            "properties": {
+                                                "product_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2,
+                                                    "minimum": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "example": [
+                                            {
+                                                "product_id": 1,
+                                                "quantity": 2
+                                            }
+                                        ],
+                                        "minItems": 1
+                                    },
                                     "payment_method": {
                                         "type": "string",
-                                        "example": "cod"
+                                        "example": "cod",
+                                        "nullable": true,
+                                        "enum": [
+                                            "cod",
+                                            "bank_transfer"
+                                        ]
                                     },
                                     "coupon_code": {
                                         "type": "string",
                                         "example": "SUMMER2026",
                                         "nullable": true
                                     },
-                                    "note": {
+                                    "notes": {
                                         "type": "string",
                                         "example": "Giao trong giờ hành chính",
                                         "nullable": true
@@ -1008,6 +1253,9 @@
                 "responses": {
                     "201": {
                         "description": "Tạo đơn hàng thành công"
+                    },
+                    "422": {
+                        "description": "Dữ liệu đơn hàng không hợp lệ"
                     }
                 },
                 "security": [
@@ -1176,35 +1424,48 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
                                     "category_id",
+                                    "name",
+                                    "sku",
                                     "price",
-                                    "stock_quantity"
+                                    "stock",
+                                    "description",
+                                    "status"
                                 ],
                                 "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Điện thoại iPhone 15 Pro"
-                                    },
                                     "category_id": {
                                         "type": "integer",
                                         "example": 1
                                     },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Áo Polo Nam Premium Cotton"
+                                    },
+                                    "sku": {
+                                        "type": "string",
+                                        "example": "POLO-NAM-99"
+                                    },
                                     "price": {
                                         "type": "number",
-                                        "example": 28990000
+                                        "format": "float",
+                                        "example": 350000
                                     },
                                     "sale_price": {
                                         "type": "number",
-                                        "example": 27490000
+                                        "format": "float",
+                                        "example": 299000
                                     },
-                                    "stock_quantity": {
+                                    "stock": {
                                         "type": "integer",
                                         "example": 50
                                     },
                                     "description": {
                                         "type": "string",
-                                        "example": "Chi tiết sản phẩm..."
+                                        "example": "Áo polo chất liệu cotton co dãn 4 chiều, thoáng mát."
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "published"
                                     }
                                 },
                                 "type": "object"
@@ -1238,10 +1499,11 @@
                     {
                         "name": "product",
                         "in": "path",
-                        "description": "ID sản phẩm",
+                        "description": "ID hoặc slug sản phẩm",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string",
+                            "example": "iphone-15-pro-max-256gb"
                         }
                     }
                 ],
@@ -1363,8 +1625,20 @@
             "description": "Quản lý địa chỉ giao hàng"
         },
         {
+            "name": "Admin - Dashboard",
+            "description": "Tổng quan vận hành cửa hàng"
+        },
+        {
             "name": "Admin - Orders",
             "description": "Quản lý đơn hàng dành cho Admin & Nhân viên"
+        },
+        {
+            "name": "Admin - Products",
+            "description": "Quản lý sản phẩm và tồn kho"
+        },
+        {
+            "name": "Admin - Users",
+            "description": "Quản lý tài khoản người dùng"
         },
         {
             "name": "Authentication",

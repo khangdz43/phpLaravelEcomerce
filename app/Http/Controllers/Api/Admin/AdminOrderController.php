@@ -92,7 +92,7 @@ class AdminOrderController extends Controller
     )]
     public function updateStatus(UpdateOrderStatusRequest $request, Order $order): JsonResponse
     {
-        $updatedOrder = $this->orderService->updateStatus($order, $request->string('status')->toString(), $request->user());
+        $updatedOrder = $this->orderService->updateStatus($order, $request->string('status')->toString());
 
         return $this->successResponse(new OrderResource($updatedOrder), 'Cập nhật trạng thái đơn hàng thành công.');
     }

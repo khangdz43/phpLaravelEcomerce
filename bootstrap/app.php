@@ -10,6 +10,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -26,13 +27,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'staff' => \App\Http\Middleware\EnsureStaff::class,
         ]);
 
-        // 2. Cấu hình điều hướng cho Unauthenticated
+        // API requests always receive JSON authentication errors.
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->is('api/*') || $request->expectsJson()) {
                 return null;
             }
 
-            return route('login');
+            return null;
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -95,6 +96,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => 'Resource hoặc URL không tồn tại.',
                 'errors'  => null,
             ], Response::HTTP_NOT_FOUND);
+        });
+
+        // 4b. Các lỗi HTTP do abort() phát sinh, ví dụ 403 khi truy cập resource của user khác
+        $exceptions->render(function (HttpExceptionInterface $e, Request $request) use ($isApi) {
+            if (! $isApi($request)) return null;
+
+            return response()->json([
+                'status'  => 'error',
+                'code'    => $e->getStatusCode() === Response::HTTP_FORBIDDEN ? 'FORBIDDEN' : 'HTTP_ERROR',
+                'message' => $e->getMessage() ?: Response::$statusTexts[$e->getStatusCode()] ?? 'HTTP error.',
+                'errors'  => null,
+            ], $e->getStatusCode());
         });
 
         // 5. Lỗi 422 Validation

@@ -42,6 +42,7 @@ class CartService
 
     public function updateQuantity(Cart $cart, int $productId, int $quantity): Cart
     {
+        /** @var CartItem $item */
         $item = $cart->items()->where('product_id', $productId)->firstOrFail();
 
         if ($quantity < 1) {

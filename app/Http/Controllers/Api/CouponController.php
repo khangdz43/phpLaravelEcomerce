@@ -41,13 +41,14 @@ class CouponController extends Controller
             'order_amount' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $coupon = $this->couponService->validateCode($validated['code'], (float) $validated['order_amount']);
-        $discount = $this->couponService->calculateDiscount($coupon, (float) $validated['order_amount']);
+        $subtotal = (int) $validated['order_amount'];
+        $coupon = $this->couponService->findUsable($validated['code']);
+        $discount = $this->couponService->discountFor($coupon, $subtotal);
 
         return $this->successResponse([
             'coupon' => new CouponResource($coupon),
             'discount_amount' => $discount,
-            'final_total' => max(0, (float) $validated['order_amount'] - $discount),
+            'final_total' => max(0, $subtotal - $discount),
         ], 'Mã giảm giá hợp lệ.');
     }
 }

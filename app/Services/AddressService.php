@@ -23,6 +23,33 @@ class AddressService
         });
     }
 
+    public function update(User $user, Address $address, array $data): Address
+    {
+        abort_unless($address->user_id === $user->id, 404);
+
+        return DB::transaction(function () use ($user, $address, $data): Address {
+            if (! empty($data['is_default'])) {
+                $user->addresses()->whereKeyNot($address->id)->update(['is_default' => false]);
+            }
+
+            $address->update($data);
+
+            return $address->refresh();
+        });
+    }
+
+    public function setDefault(User $user, Address $address): Address
+    {
+        abort_unless($address->user_id === $user->id, 404);
+
+        return DB::transaction(function () use ($user, $address): Address {
+            $user->addresses()->whereKeyNot($address->id)->update(['is_default' => false]);
+            $address->update(['is_default' => true]);
+
+            return $address->refresh();
+        });
+    }
+
     public function destroy(User $user, Address $address): void
     {
         abort_unless($address->user_id === $user->id, 404);

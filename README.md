@@ -83,7 +83,7 @@ This repository is intentionally organized as a working reference project. Follo
 2. **Validation and authorization**: `app/Http/Requests`, `app/Rules`, `app/Policies`, `app/Http/Middleware`.
 3. **Application layer**: `app/Http/Controllers`, `app/Services`, `app/Repositories`, `app/DTOs`.
 4. **Persistence and relationships**: `app/Models`, `database/migrations`, `database/factories`, `database/seeders`.
-5. **Responses and presentation**: `app/Http/Resources`, `resources/views/components`, `resources/views/shop`.
+5. **Responses**: `app/Http/Resources`.
 6. **Executable documentation**: `tests/Feature/EcommerceApiTest.php`.
 
 ### Included Learning Examples
@@ -92,7 +92,6 @@ This repository is intentionally organized as a working reference project. Follo
 - Middleware plus Policy authorization for product mutations.
 - Eloquent scopes: `published()` and `priceBetween()`.
 - Polymorphic comments attached to products and orders.
-- Blade layout, anonymous components, custom `@money` directive, and a view composer.
 - Sanctum token authentication and database-backed RBAC.
 - Form Requests, a custom `SalePriceBelowPrice` validation rule, transactions, row locking, and eager loading.
 - SQLite in-memory feature tests for repeatable local verification.

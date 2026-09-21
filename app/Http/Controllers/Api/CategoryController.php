@@ -7,6 +7,7 @@ use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -76,6 +77,7 @@ class CategoryController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        $validated['slug'] = Str::slug($validated['name']);
         $category = Category::create($validated);
 
         return $this->successResponse(new CategoryResource($category), 'Tạo danh mục thành công.', Response::HTTP_CREATED);
@@ -106,7 +108,7 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255|unique:categories,name,'.$category->id,
+            'name' => 'sometimes|required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
