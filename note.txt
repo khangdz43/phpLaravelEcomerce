@@ -1,0 +1,62 @@
+Luồng đi
+public/index.php
+ -> bootstrap/ app.php  Bản chất: Nơi khởi tạo IoC Container (Trái tim của Framework), nạp các cấu hình Middleware, Routing, Exception handling vào bộ nhớ. Nó chuẩn bị sẵn "cơ sở vật chất" trước khi code của ông chạy.
+
+ -> routes 
+ 
+ -> app (logic) =--> resource (giao diện)
+
+
+config : chứa các file cấu hình toàn hệ thống 
+
+database/:
+
+migrations/: Lịch sử thay đổi cấu trúc Database (Create/Alter table).
+
+factories/ & seeders/: Code dùng để tạo dữ liệu giả (Fake Data) để test.
+
+storage/: Thư mục ghi file của ứng dụng. Log lỗi (storage/logs/laravel.log), file upload của user (ảnh sản phẩm), cache file. Thư mục này phải được cấp quyền ghi (Write Permission).
+
+vendor/: Chứa toàn bộ mã nguồn của Laravel Framework và các Package ông cài qua Composer. Tật xấu lớn nhất của newbie là vào vendor/ sửa code. Tuyệt đối KHÔNG ĐƯỢC SỬA gì trong này.
+
+
+.env (Environment File): Chứa thông tin nhạy cảm của từng môi trường (Password DB, API Key Stripe, Mail User). File này KHÔNG BAO GIỜ được đẩy lên Git (.gitignore đã chặn nó).
+
+composer.json: File khai báo các thư viện PHP mà dự án sử dụng (tương tự package.json của Node.js).
+
+artisan: File script CLI của Laravel. Khi ông gõ php artisan ..., chính là đang chạy file này để gọi các lệnh tự động hóa.
+
+
+artisan giống flyway còn thằng model giống entity
+
+
+song entity sang thêm bản ghi vào db là song 
+
+factory : định nghĩa khuôn mẫu cho 1 bản ghi
+seeder : ra lệnh cho factory tạo bản ghi và ghi vào db
+
+cũng như bên java cần request để validate
+
+
+binding : 
+resource : giống mapstruct trong spring
+
+DTOs là nơi để chứa dữ liệu , chuyển các lớp đóng gói vận chuyển giữa các tầng
+
+::class : namespace đầy đủ của class 
+
+
+eloquent : là implement
+contrac hợp đồng interface
+
+
+
+luồng đi của exception sẽ là app.php ở bootstrap nếu mà có nơi xử lí thì nó để cho xử lí 
+có các bắt exception chung chung
+
+còn ở repo mình ném các exception mình cấu hình ra
+
+middleware là chỗ xử lý những cái như bảo vệ ở http , filterchain trong java ấy
+hợp lệ thì cho next xử lý
+
+sanctum : security của laravel
