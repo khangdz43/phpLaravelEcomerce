@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Address;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
+class AddressService
+{
+    public function store(User $user, array $data): Address
+    {
+        return DB::transaction(function () use ($user, $data): Address {
+            if (! empty($data['is_default'])) {
+                $user->addresses()->update(['is_default' => false]);
+            }
+
+            if ($user->addresses()->doesntExist()) {
+                $data['is_default'] = true;
+            }
+
+            return $user->addresses()->create($data);
+        });
+    }
+
+    public function destroy(User $user, Address $address): void
+    {
+        abort_unless($address->user_id === $user->id, 404);
+        $address->delete();
+    }
+
+    public function formatted(Address $address): string
+    {
+        return collect([
+            $address->address_line,
+            $address->ward,
+            $address->district,
+            $address->province,
+        ])->filter()->implode(', ');
+    }
+}

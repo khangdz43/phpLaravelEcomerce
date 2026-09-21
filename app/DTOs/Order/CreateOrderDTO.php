@@ -6,7 +6,7 @@ use App\Http\Requests\Api\Order\StoreOrderRequest;
 
 readonly class CreateOrderDTO
 {
-    /** gợi í PHP doc 
+    /**
      * @param CreateOrderItemDTO[] $items
      */
     public function __construct(
@@ -14,7 +14,10 @@ readonly class CreateOrderDTO
         public string $customerEmail,
         public string $customerPhone,
         public string $shippingAddress,
-        public array $items
+        public array $items,
+        public ?string $couponCode = null,
+        public string $paymentMethod = 'cod',
+        public ?string $notes = null,
     ) {}
 
     public static function fromRequest(StoreOrderRequest $request): self
@@ -34,7 +37,10 @@ readonly class CreateOrderDTO
             customerEmail: $validated['customer_email'],
             customerPhone: $validated['customer_phone'],
             shippingAddress: $validated['shipping_address'],
-            items: $items
+            items: $items,
+            couponCode: $validated['coupon_code'] ?? null,
+            paymentMethod: $validated['payment_method'] ?? 'cod',
+            notes: $validated['notes'] ?? null,
         );
     }
 }

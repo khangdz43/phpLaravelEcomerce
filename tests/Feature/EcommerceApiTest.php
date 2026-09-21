@@ -70,4 +70,73 @@ class EcommerceApiTest extends TestCase
         $this->putJson("/api/products/{$product->slug}", ['name' => 'Blocked update'])
             ->assertForbidden();
     }
+
+    public function test_guest_can_complete_web_checkout_and_stock_is_decremented(): void
+    {
+        $product = Product::factory()->create([
+            'status' => 'published',
+            'stock' => 5,
+            'price' => 250000,
+        ]);
+
+        $response = $this->post('/checkout', [
+            'customer_name' => 'Test Customer',
+            'customer_email' => 'checkout@example.com',
+            'customer_phone' => '0900000000',
+            'shipping_address' => '1 Learning Street',
+            'items' => json_encode([
+                ['id' => $product->id, 'quantity' => 2, 'price' => 1],
+            ]),
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect();
+
+        $order = \App\Models\Order::where('customer_email', 'checkout@example.com')->firstOrFail();
+
+        $response->assertRedirect(route('shop.checkout.success', $order->order_code));
+        $this->assertSame(3, $product->fresh()->stock);
+        $this->assertSame(500000, (int) $order->total_amount);
+        $this->assertDatabaseHas('order_items', [
+            'order_id' => $order->id,
+            'product_id' => $product->id,
+            'quantity' => 2,
+        ]);
+    }
+
+    public function test_staff_can_sign_in_and_open_operations_dashboard(): void
+    {
+        $response = $this->post('/login', [
+            'email' => 'staff@gmail.com',
+            'password' => '12345678',
+        ]);
+
+        $response->assertRedirect(route('shop.index'));
+        $this->get('/admin')->assertOk()->assertSee('Quản trị');
+    }
+
+    public function test_authenticated_api_can_read_its_order_history(): void
+    {
+        $customer = User::where('email', 'customer@gmail.com')->firstOrFail();
+        Sanctum::actingAs($customer);
+
+        $this->getJson('/api/orders')
+            ->assertOk()
+            ->assertJsonStructure(['data' => ['items', 'pagination']]);
+    }
+
+    public function test_guest_can_register_from_the_web_and_get_customer_role(): void
+    {
+        $response = $this->post('/register', [
+            'name' => 'New Web Customer',
+            'email' => 'new-web-customer@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+        ]);
+
+        $response->assertRedirect(route('shop.index'));
+        $this->assertAuthenticated();
+        $this->assertDatabaseHas('users', ['email' => 'new-web-customer@example.com']);
+        $this->assertTrue(auth()->user()->roles()->where('name', 'customer')->exists());
+    }
 }

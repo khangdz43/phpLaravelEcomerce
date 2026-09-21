@@ -35,12 +35,13 @@ class AppServiceProvider extends ServiceProvider
             "<?php echo number_format({$expression}, 0, ',', '.') . ' đ'; ?>"
         );
 
-        View::composer('shop.*', function ($view): void {
+        View::composer('components.layouts.shop', function ($view): void {
             $view->with('navigationCategories', Category::query()
                 ->where('is_active', true)
                 ->withCount('products')
                 ->orderBy('name')
                 ->get());
+            $view->with('isStaff', auth()->user()?->hasPermission('orders.view') ?? false);
         });
     }
 }

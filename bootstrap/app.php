@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // 1. ĐĂNG KÝ ALIAS MIDDLEWARE 
         $middleware->alias([
             'permission' => CheckPermission::class,
+            'staff' => \App\Http\Middleware\EnsureStaff::class,
         ]);
 
         // 2. Cấu hình điều hướng cho Unauthenticated
@@ -41,7 +42,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // 1. Lỗi Business Exception
         $exceptions->render(function (BusinessException $e, Request $request) use ($isApi) {
-            if (! $isApi($request)) return null;
+            if (! $isApi($request)) {
+                if ($request->isMethod('GET')) {
+                    abort($e->statusCode, $e->getMessage());
+                }
+
+                return back()->withErrors(['business' => $e->getMessage()])->withInput();
+            }
 
             return response()->json([
                 'status'   => 'error',

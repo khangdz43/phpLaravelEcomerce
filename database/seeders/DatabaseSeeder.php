@@ -2,21 +2,27 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use App\Models\Product;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Chạy Seeder phân quyền RBAC trước
         $this->call([
+            // 1. RBAC - Roles & Permissions phải chạy trước
             RbacSeeder::class,
-        ]);
 
-        // 2. Tạo Data mẫu Category & Product
-        Category::factory(5)->create();
-        Product::factory(20)->create();
+            // 2. Users - Admin, Staff, Customers
+            UserSeeder::class,
+
+            // 3. Categories - Danh mục sản phẩm
+            CategorySeeder::class,
+
+            // 4. Products - Sản phẩm mẫu
+            ProductSeeder::class,
+
+            // 5. Coupons - Mã giảm giá
+            CouponSeeder::class,
+        ]);
     }
 }

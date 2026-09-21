@@ -16,8 +16,10 @@ class Category extends Model
         'parent_id',
         'name',
         'slug',
+        'description',
         'is_active',
     ];
+
 
     // tức là khi gọi parent nó sẽ 
     // SELECT * FROM categories WHERE id = parent_id;

@@ -92,4 +92,9 @@ class ProductRepository implements ProductRepositoryInterface
     {
         return $product->decrement('stock', $quantity);
     }
+
+    public function incrementStock(Product $product, int $quantity): bool
+    {
+        return $product->increment('stock', $quantity);
+    }
 }

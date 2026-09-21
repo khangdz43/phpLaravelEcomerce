@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasMany as HasManyRelation;
 use Illuminate\Database\Eloquent\Builder;
 
 class Product extends Model
@@ -45,6 +46,11 @@ class Product extends Model
         return $this->morphMany(Comment::class, 'commentable');
     }
 
+    public function images(): HasManyRelation
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', 'published');
@@ -55,5 +61,10 @@ class Product extends Model
         return $query
             ->when($minimum !== null, fn(Builder $query) => $query->where('price', '>=', $minimum))
             ->when($maximum !== null, fn(Builder $query) => $query->where('price', '<=', $maximum));
+    }
+
+    public function effectivePrice(): int
+    {
+        return (int) ($this->sale_price ?? $this->price);
     }
 }

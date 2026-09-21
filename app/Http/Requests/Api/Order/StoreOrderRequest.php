@@ -35,6 +35,9 @@ class StoreOrderRequest extends FormRequest
             'items'              => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'integer', 'distinct', 'exists:products,id'],
             'items.*.quantity'   => ['required', 'integer', 'min:1'],
+            'coupon_code'        => ['nullable', 'string', 'max:50'],
+            'payment_method'     => ['nullable', 'in:cod,bank_transfer'],
+            'notes'              => ['nullable', 'string', 'max:1000'],
         ];
     }
     public function messages(): array

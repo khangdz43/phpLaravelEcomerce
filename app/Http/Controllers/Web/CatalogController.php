@@ -23,6 +23,7 @@ class CatalogController extends Controller
                 'sort',
                 'per_page',
             ])),
+            'catalogTotal' => Product::query()->count(),
         ]);
     }
 
@@ -31,7 +32,7 @@ class CatalogController extends Controller
         abort_unless($product->status === 'published', 404);
 
         return view('shop.show', [
-            'product' => $product->load(['category', 'comments.user']),
+            'product' => $product->load(['category', 'comments.user', 'images']),
         ]);
     }
 }

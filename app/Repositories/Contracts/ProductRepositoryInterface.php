@@ -17,4 +17,5 @@ interface ProductRepositoryInterface
     public function slugExists(string $slug, ?int $ignoreId = null): bool;
     public function findAndLock(int $id): ?Product;
     public function decrementStock(Product $product, int $quantity): bool;
+    public function incrementStock(Product $product, int $quantity): bool;
 }

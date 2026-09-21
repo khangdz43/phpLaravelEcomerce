@@ -7,10 +7,30 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthService
 {
+    public function registerWeb(array $data): User
+    {
+        return DB::transaction(function () use ($data): User {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+
+            if ($customerRole = Role::where('name', 'customer')->first()) {
+                $user->roles()->sync([$customerRole->id]);
+            }
+
+            Auth::login($user);
+
+            return $user;
+        });
+    }
+
     public function register(array $data): array
     {
         return DB::transaction(function () use ($data): array {
