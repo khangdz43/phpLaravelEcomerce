@@ -348,7 +348,7 @@ class EcommerceApiTest extends TestCase
         Sanctum::actingAs($staff);
 
         // cố tính sửa test CI
-        $this->deleteJson("/api/productssss/{$product->id}")->assertForbidden();
+        $this->deleteJson("/api/products/{$product->id}")->assertForbidden();
     }
 
     public function test_admin_can_manage_categories(): void
