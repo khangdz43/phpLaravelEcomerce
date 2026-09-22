@@ -20,8 +20,12 @@ class AppServiceProvider extends ServiceProvider
         //ProductRepository 
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        // App::singleton() tạo 1 instance như bên java
+        // App::scoped() 1 instance trong 1 http request
+
     }
 
+    // đã binding song an toàn để call service khác 
     public function boot(): void
     {
         Gate::policy(Product::class, ProductPolicy::class);

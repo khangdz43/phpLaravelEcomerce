@@ -28,6 +28,9 @@ Validation & Security: Form Requests, Custom Validation Rules, CSRF, XSS Prevent
 
 Authentication & Authorization: Laravel Breeze/Fortify, Gates & Policies, Sanctum vs Passport (API Auth).
 
+
+
+
 Phase 3: Advanced Architecture & Under The Hood (Bước ngoặt lên Senior)
 Đây là lúc ông đào sâu vào bản chất (Internals) của Laravel.
 
@@ -46,6 +49,10 @@ Events & Listeners: Decoupling Code với Event Driven Architecture.
 Queues, Jobs & Redis: Asynchronous Processing, Job Chaining, Batching, Failed Jobs, Rate Limiting.
 
 Task Scheduling & Console Commands: Custom Artisan Commands (php artisan make:command).
+
+
+
+
 
 Phase 4: Production, Performance & Scaling (Master Level)
 Chạy code trên local tốt là chưa đủ, hệ thống chịu nải trên Production mới là thước đo.

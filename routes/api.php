@@ -14,11 +14,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes
-|--------------------------------------------------------------------------
-*/
+
 
 // Authentication
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -36,11 +32,7 @@ Route::get('/products/{product}', [ProductController::class, 'show']);
 Route::get('/products/{product}/comments', [CommentController::class, 'index']);
 
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated User Routes (auth:sanctum)
-|--------------------------------------------------------------------------
-*/
+
 Route::middleware('auth:sanctum')->group(function () {
     // Profile & Logout
     Route::post('/auth/logout', [AuthController::class, 'logout']);
@@ -72,11 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/products/{product}/comments', [CommentController::class, 'store']);
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Admin / Staff Management Routes (Permission-protected)
-    |--------------------------------------------------------------------------
-    */
+
 
     // Dashboard
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->middleware('permission:dashboard.view');
