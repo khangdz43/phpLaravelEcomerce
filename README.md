@@ -1,3 +1,5 @@
+[![Laravel CI](https://github.com/khangdz43/phpLaravelEcomerce/actions/workflows/ci.yml/badge.svg)](https://github.com/khangdz43/phpLaravelEcomerce/actions/workflows/ci.yml)
+
 Phase 1: Core Prerequisites (Bắt buộc phải cứng)
 Trước khi gõ laravel new, ông phải giải quyết triệt để phần base này.
 
